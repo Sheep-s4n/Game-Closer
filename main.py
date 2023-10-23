@@ -4,26 +4,26 @@ import sys
 from dragonfly import Window
 
 # defaults
-ask_on_run = False # if true process_name, time_to_wait and optionnal_end_message won't be used
-process_name = "Terminal"
-time_to_wait = 1 # in minute
-optionnal_end_message = ""
+ask_on_run = True # if true process_name, time_to_wait and optional_end_message won't be used
+process_name = ""
+time_to_wait = 30 # in minute
+optional_end_message = "Go to work you slacker!"
 
     # wont check the next condtition if there is less or 1 arg thanks to the 'and' operator 
 if len(sys.argv) > 1 and sys.argv[1] == "--help":
-    print("Usage: python main.py [process name] [time to wait] [end message]")
+    print("Usage: python main.py [process file name] [time to wait] [end message]")
     print("Note: if an arguments isn't provided, the default one will be used instead")
     sys.exit(1)
 
 process_name = sys.argv[1]  if len(sys.argv) >= 2 else process_name
 time_to_wait = int(sys.argv[2]  if len(sys.argv) >= 3 else time_to_wait)
-optionnal_end_message = sys.argv[3]  if len(sys.argv) >= 4 else optionnal_end_message
+optional_end_message = sys.argv[3]  if len(sys.argv) >= 4 else optional_end_message
 
 
 if ask_on_run:
     process_name = input("Enter the process name: ")
     time_to_wait = int(input("Enter the time to wait for closing the process: ") or 0)
-    optionnal_end_message = input("Enter the optional end message: ")
+    optional_end_message = input("Enter the optional end message: ")
     print("\n-------------------\n")
 
 
@@ -86,8 +86,8 @@ try:
     if time_to_wait > 0:
         print("\x1b[2J\x1b[H\x1b[?25h") # clear and make cursor visible again
     killProcess(process_name)
-    if optionnal_end_message != "":
-        print(f"\x1b[1;32m{optionnal_end_message}\x1b[0m")
+    if optional_end_message != "":
+        print(f"\x1b[1;32m{optional_end_message}\x1b[0m")
     user_input = input("Press enter to exit...")
 except:
     print("\x1b[?25h") # get back cursor when pressing ctrl+C for exiting
