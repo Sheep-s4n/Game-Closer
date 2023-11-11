@@ -34,9 +34,10 @@ You can change default arguments in the script by changing the variables at the 
 
 There are 3 arguments that you can provide for running the script:
 
-- **Process name** *(name in script: `process_name`)* - *(default: "")* 
+- **Processes names** *(name in script: `processes`)* - *(default: [""])* 
  
-  - The process/game name should be the **name of the executable** file that makes the game process, not the game name itself (often they are the same).
+  - The processes/games name should be the **names of the executables** files that makes the games processes, not the game name itself (often they are the same).
+  - Each process in the list must be separated by a comma.
   
   - You can also use the **title of the window** created by the process in order to close the game.
   
