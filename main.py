@@ -2,6 +2,9 @@ import wmi
 import time 
 import sys 
 from dragonfly import Window
+import os
+import json
+
 
 # defaults
 ask_on_run = True # if true processes, time_to_wait and optional_end_message won't be used
@@ -9,8 +12,22 @@ processes = [""]
 time_to_wait = 30 # in minute
 optional_end_message = "Go to work you slacker!"
 
+# will not be asked on run
+shutdown_pc = True
+invisible_terminal = False
+
+
+
+
+
+def printWarning(info):
+    print(f"\x1b[33mWarning: {info}\x1b[0m")
+
+if shutdown_pc:
+    printWarning("The pc will be shuted down after the countdown")
+
     # wont check the next condtition if there is less or 1 arg thanks to the 'and' operator 
-if len(sys.argv) > 1 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
+if len(sys.argv) > 1 and (sys.argv[1] in ["--help","-h"]):
     print("Usage: python main.py [processes files names (comma between each process)] [time to wait] [end message]")
     print("Example: python main.py \"genshin, minecraft\" 20 \"close genshin or/and minecraft after 20 min\"")
     print("Note: if an arguments isn't provided, the default one will be used instead")
@@ -28,7 +45,6 @@ if ask_on_run:
     print("\n-------------------\n")
 
 SECONDS_IN_MINUTE = 60
-
 
 def printInfo(info):
     print(f"\x1b[32mInfo: {info}\x1b[0m")
@@ -62,13 +78,25 @@ def killProcess(p_name ,process_array):
         print("\x1b[?25h")  # get back cursor when pressing ctrl+C for exiting
 
 # --------- Script ---------- #
-
-
 try: 
     if not processes or processes[0] == "": 
         printError("Enter a process name")
         exit()
     print("\x1b[2J\x1b[H") # clear the screen and put cursor to beginning in order to remove the user input
+
+    file = open("data.json" , "a+")
+    if os.stat("data.json").st_size == 0: 
+        file.write('{\n\t"spawn_process" : false\n}\n')
+        file.close()
+        file = open("data.json" , "a+")
+    else : file = open("data.json" , "a+")
+    data = json.load(file)
+    print(data)
+    if data.get("spawn_process") == None:
+        printError("Something went wrong when fetching data (data.json)")
+    else:
+        json.dump({"spawn_process" : False}, file)
+
     for i in range(time_to_wait):
         if i == 0: 
             print("\x1b[?25l") # for new line when moving cursor up + hide cursor
@@ -90,6 +118,8 @@ try:
     for process in processes:
         killProcess(process , _process_array)
 
+    if shutdown_pc:
+        os.system('shutdown -s')
     if optional_end_message != "":
         print(f"\x1b[1;32m{optional_end_message}\x1b[0m")
     user_input = input("Press enter to exit...")
