@@ -13,7 +13,7 @@ time_to_wait = 30 # in minute
 optional_end_message = "Go to work you slacker!"
 
 # will not be asked on run
-shutdown_pc = True
+shutdown_pc = False
 invisible_terminal = False
 
 
@@ -84,28 +84,13 @@ try:
         exit()
     print("\x1b[2J\x1b[H") # clear the screen and put cursor to beginning in order to remove the user input
 
-    file = open("data.json" , "a+")
-    if os.stat("data.json").st_size == 0: 
-        file.write('{\n\t"spawn_process" : false\n}\n')
-        file.close()
-        file = open("data.json" , "a+")
-    else : file = open("data.json" , "a+")
-    data = json.load(file)
-    print(data)
-    if data.get("spawn_process") == None:
-        printError("Something went wrong when fetching data (data.json)")
-    else:
-        json.dump({"spawn_process" : False}, file)
-
     for i in range(time_to_wait):
         if i == 0: 
             print("\x1b[?25l") # for new line when moving cursor up + hide cursor
         time_unit = "minutes" if time_to_wait - i > 1  else "minute"
+        process_plural = "process" if len(processes) == 1 else "processes"
         # need to clear the previous line before writing !!!!!
-        if len(processes) < 1:
-            print(f"\x1b[1A\x1b[2K\x1b[33m #  Time: {time_to_wait - i} {time_unit} left until closing {processes[0]} process\x1b[0m") # \x1b[ = ANSI escape sequences |||| 1A move cursor up one time ||| 0m reset color ||| 2K = erase the entire line 
-        else:
-            print(f"\x1b[1A\x1b[2K\x1b[33m #  Time: {time_to_wait - i} {time_unit} left until closing {', '.join(processes)} processes\x1b[0m")
+        print(f"\x1b[1A\x1b[2K\x1b[33m #  Time: {time_to_wait - i} {time_unit} left until closing {', '.join(processes)} {process_plural}\x1b[0m") # \x1b[ = ANSI escape sequences |||| 1A move cursor up one time ||| 0m reset color ||| 2K = erase the entire line 
         time.sleep(SECONDS_IN_MINUTE)
 
 
